@@ -127,10 +127,12 @@ no_proxy={{.NOProxy}}`
 
 func (v *VBox) StartVM(vmConfig *config.VMConfig) error {
 	if err := v.Driver.StartVM(vmConfig.Name); err != nil {
+		println("driver start vm" + err.Error())
 		return err
 	}
 
 	if err := v.insertSecureKeypair(vmConfig); err != nil {
+		println("insert secure keypair" + err.Error())
 		return err
 	}
 
@@ -149,17 +151,26 @@ func (v *VBox) StartVM(vmConfig *config.VMConfig) error {
 }
 
 func (v *VBox) insertSecureKeypair(vmConfig *config.VMConfig) error {
+	println("inside >>>>>>> insert secure keypair <<<<<<<<<<")
+	err := v.writePrivateKey(v.Config.InsecurePrivateKey)
+	if err != nil {
+		println("writing insecure key as secure key" + err.Error())
+	}
+
 	exists, err := v.FS.Exists(v.Config.PrivateKeyPath)
 	if err != nil {
+		println("v.fs.Exists err" + err.Error())
 		return err
 	}
 
 	if exists {
+		fmt.Println("key exists")
 		return nil
 	}
 
 	privateKey, publicKey, err := v.SSH.GenerateKeypair()
 	if err != nil {
+		fmt.Println("generate keypair")
 		return err
 	}
 
@@ -180,14 +191,21 @@ func (v *VBox) insertSecureKeypair(vmConfig *config.VMConfig) error {
 		ioutil.Discard,
 		ioutil.Discard,
 	); err != nil {
+		println("tried with key >>>>>>>> \\n" + string(v.Config.InsecurePrivateKey) + "<<<<<<<<")
+		fmt.Println("run ssh command" + err.Error())
 		return err
 	}
 
-	return v.writePrivateKey(privateKey)
+	err = v.writePrivateKey(privateKey)
+	if err != nil {
+		println("writing private key" + err.Error())
+	}
+	return err
 }
 
 func (v *VBox) writePrivateKey(privateKey []byte) error {
 	if err := v.FS.Write(v.Config.PrivateKeyPath, bytes.NewReader(privateKey), false); err != nil {
+		println("write private key" + err.Error())
 		return err
 	}
 	return v.FS.Chmod(v.Config.PrivateKeyPath, 0600)

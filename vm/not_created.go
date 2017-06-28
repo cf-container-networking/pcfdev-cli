@@ -68,6 +68,7 @@ func (n *NotCreated) VerifyStartOpts(opts *StartOpts) error {
 	}
 
 	if opts.IP == "" && opts.Domain != "" && !address.IsDomainAllowed(opts.Domain) {
+		println(errors.New(fmt.Sprintf("%s is not one of the allowed PCF Dev domains", opts.Domain)).Error())
 		return errors.New(fmt.Sprintf("%s is not one of the allowed PCF Dev domains", opts.Domain))
 	}
 
@@ -167,9 +168,11 @@ func (n *NotCreated) Start(opts *StartOpts) error {
 
 	stoppedVM, err := n.Builder.VM(n.VMConfig.Name)
 	if err != nil {
+		println("building vm error" + err.Error())
 		return &StartVMError{err}
 	}
 	if err := stoppedVM.Start(opts); err != nil {
+		println("starting vm error" + err.Error())
 		return err
 	}
 	return nil

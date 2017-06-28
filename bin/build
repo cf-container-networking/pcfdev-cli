@@ -11,7 +11,9 @@ then
   product_file_id=$(cat ${pcfdev_cli_path}/assets/test-ova-metadata.json | jq -r .product_file_id)
   md5=$(cat ${pcfdev_cli_path}/assets/test-ova-metadata.json | jq -r .md5)
   ova_version="0"
-  insecure_private_key=$(cat $pcfdev_cli_path/assets/test-private-key.pem)
+  #insecure_private_key=$(cat $pcfdev_cli_path/assets/test-private-key.pem)
+  insecure_private_key=$(cat $pcfdev_cli_path/assets/private-key.pem)
+
 else
   if [[ "$1" == "internal" ]]
   then

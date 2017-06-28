@@ -85,6 +85,7 @@ func (s *StartCmd) Run() error {
 
 	existingVMName, err := s.VBox.GetVMName()
 	if err != nil {
+		println(err.Error())
 		return err
 	}
 	if existingVMName != "" {
@@ -105,6 +106,7 @@ func (s *StartCmd) Run() error {
 
 	v, err := s.VMBuilder.VM(name)
 	if err != nil {
+		println(err.Error())
 		return err
 	}
 
@@ -112,15 +114,18 @@ func (s *StartCmd) Run() error {
 		return v.Provision(&vm.StartOpts{})
 	} else {
 		if err := v.VerifyStartOpts(s.Opts); err != nil {
+			println(err.Error())
 			return err
 		}
 		if s.Opts.OVAPath == "" && existingVMName != "pcfdev-custom" {
 			if err := s.DownloadCmd.Run(); err != nil {
+				println(err.Error())
 				return err
 			}
 		}
 
 		if err := v.Start(s.Opts); err != nil {
+			println(err.Error())
 			return err
 		}
 

@@ -26,11 +26,13 @@ type VBoxBuilder struct {
 func (b *VBoxBuilder) VM(vmName string) (VM, error) {
 	status, err := b.VBox.VMStatus(vmName)
 	if err != nil {
+		println(err.Error())
 		return nil, err
 	}
 
 	vmConfig, err := b.getVMConfig(vmName, status)
 	if err != nil {
+		println(err.Error())
 		return &Invalid{
 			Err: err,
 		}, nil

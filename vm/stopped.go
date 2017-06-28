@@ -60,6 +60,7 @@ func (s *Stopped) VerifyStartOpts(opts *StartOpts) error {
 func (s *Stopped) Start(opts *StartOpts) error {
 	s.UI.Say("Starting VM...")
 	if err := s.VBox.StartVM(s.VMConfig); err != nil {
+		println(err.Error())
 		return &StartVMError{err}
 	}
 
